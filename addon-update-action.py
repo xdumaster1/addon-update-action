@@ -1,0 +1,49 @@
+import argparse
+
+import yaml
+from github import Auth, Github
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    "--github_token",
+    type=str,
+    help="Github API Access token, NOT the usual Github token.",
+    required=True,
+)
+parser.add_argument(
+    "--new_server_tag",
+    type=str,
+    help="The new server tag to use for the release.",
+    required=True,
+)
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+
+    MAIN = "main"
+    ORGANIZATION = "music-assistant"
+    ADDON_REPO = "home-assistant-addon"
+
+    github = Github(auth=Auth.Token(args.github_token))
+
+    addon_repo = github.get_repo(f"{ORGANIZATION}/{ADDON_REPO}")
+
+    addon_config_file = addon_repo.get_contents(
+        "music_assistant_beta/config.yaml", ref=MAIN
+    )
+
+    existing_config_content = yaml.safe_load(
+        addon_config_file.decoded_content.decode("utf-8")
+    )
+
+    existing_config_content["version"] = args.new_server_tag
+
+    updated_config = yaml.dump(existing_config_content)
+    addon_repo.update_file(
+        path="music_assistant_beta/config.yaml",
+        message=f"Update config.yaml for {args.new_server_tag}",
+        content=updated_config,
+        sha=addon_config_file.sha,
+        branch=MAIN,
+    )

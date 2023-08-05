@@ -1,0 +1,19 @@
+name: 'MASS Release Notes Action'
+description: 'This action aggregates release notes across several repositories.'
+inputs:
+  github_token:
+    description: 'The GitHub API access token to use for authentication.'
+    required: true
+  new_server_tag:
+    description: 'The latest server tag'
+    required: true
+branding:
+  icon: 'box'
+  color: 'purple'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - --github_token=${{ inputs.github_token }}
+    - --new_server_tag=${{ inputs.new_server_tag }}
