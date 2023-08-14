@@ -12,7 +12,7 @@ parser.add_argument(
     required=True,
 )
 parser.add_argument(
-    "--new_server_tag",
+    "--new_server_version",
     type=str,
     help="The new server tag to use for the release.",
     required=True,
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         addon_config_file.decoded_content.decode("utf-8")
     )
 
-    existing_config_content["version"] = args.new_server_tag
+    existing_config_content["version"] = args.new_server_version
 
     updated_config = yaml.dump(existing_config_content)
     addon_repo.update_file(

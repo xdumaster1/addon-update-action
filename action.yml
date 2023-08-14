@@ -4,7 +4,7 @@ inputs:
   github_token:
     description: 'The GitHub API access token to use for authentication.'
     required: true
-  new_server_tag:
+  new_server_version:
     description: 'The latest server tag'
     required: true
 branding:
@@ -16,4 +16,4 @@ runs:
   image: 'Dockerfile'
   args:
     - --github_token=${{ inputs.github_token }}
-    - --new_server_tag=${{ inputs.new_server_tag }}
+    - --new_server_version=${{ inputs.new_server_version }}
