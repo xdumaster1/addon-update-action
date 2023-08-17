@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     addon_repo.update_file(
         path="music_assistant_beta/config.yaml",
-        message=f"Update config.yaml for {args.new_server_tag}",
+        message=f"Update config.yaml for {args.new_server_version}",
         content=updated_config,
         sha=addon_config_file.sha,
         branch=MAIN,
