@@ -39,7 +39,8 @@ if __name__ == "__main__":
 
     existing_config_content["version"] = args.new_server_version
 
-    updated_config = yaml.dump(existing_config_content)
+    updated_config = yaml.dump(existing_config_content, sort_keys=False)
+
     addon_repo.update_file(
         path="music_assistant_beta/config.yaml",
         message=f"Update config.yaml for {args.new_server_tag}",
