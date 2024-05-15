@@ -18,7 +18,7 @@ parser.add_argument(
     required=True,
 )
 parser.add_argument(
-    "--release_type",
+    "--pre_release",
     type=str,
     help="Stable or Beta release.",
     required=False,
@@ -35,11 +35,11 @@ if __name__ == "__main__":
 
     addon_repo = github.get_repo(f"{ORGANIZATION}/{ADDON_REPO}")
 
-    release_type = args.release_type
+    pre_release = args.pre_release
 
     addon_version = "music_assistant"
 
-    if release_type & release_type == "BETA":
+    if pre_release is True:
         addon_version = "music_assistant_beta"
 
     addon_config_file = addon_repo.get_contents(
