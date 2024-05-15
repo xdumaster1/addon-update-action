@@ -29,8 +29,18 @@ if __name__ == "__main__":
 
     addon_repo = github.get_repo(f"{ORGANIZATION}/{ADDON_REPO}")
 
+    pre_release_bool = False
+
+    addon_version = "music_assistant"
+
+    if "b" in args.new_server_version:
+        pre_release_bool = True
+
+    if pre_release_bool is True:
+        addon_version = "music_assistant_beta"
+
     addon_config_file = addon_repo.get_contents(
-        "music_assistant_beta/config.yaml", ref=MAIN
+        f"{addon_version}/config.yaml", ref=MAIN
     )
 
     existing_config_content = yaml.safe_load(
@@ -42,7 +52,7 @@ if __name__ == "__main__":
     updated_config = yaml.dump(existing_config_content, sort_keys=False)
 
     addon_repo.update_file(
-        path="music_assistant_beta/config.yaml",
+        path=f"{addon_version}/config.yaml",
         message=f"Update config.yaml for {args.new_server_version}",
         content=updated_config,
         sha=addon_config_file.sha,
