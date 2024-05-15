@@ -17,6 +17,12 @@ parser.add_argument(
     help="The new server tag to use for the release.",
     required=True,
 )
+parser.add_argument(
+    "--release_type",
+    type=str,
+    help="Stable or Beta release.",
+    required=False,
+)
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -29,14 +35,11 @@ if __name__ == "__main__":
 
     addon_repo = github.get_repo(f"{ORGANIZATION}/{ADDON_REPO}")
 
-    pre_release_bool = False
+    release_type = args.release_type
 
     addon_version = "music_assistant"
 
-    if "b" in args.new_server_version:
-        pre_release_bool = True
-
-    if pre_release_bool is True:
+    if release_type & release_type == "BETA":
         addon_version = "music_assistant_beta"
 
     addon_config_file = addon_repo.get_contents(
