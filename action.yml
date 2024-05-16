@@ -7,6 +7,9 @@ inputs:
   new_server_version:
     description: 'The latest server tag'
     required: true
+  pre_release:
+    description: 'Stable or beta.'
+    required: true   
 branding:
   icon: 'box'
   color: 'purple'
@@ -17,3 +20,4 @@ runs:
   args:
     - --github_token=${{ inputs.github_token }}
     - --new_server_version=${{ inputs.new_server_version }}
+    - --pre_release=${{ inputs.pre_release }}
