@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     addon_repo = github.get_repo(f"{ORGANIZATION}/{ADDON_REPO}")
 
-    pre_release = args.pre_release
+    pre_release = args.pre_release in ("true", "True")
 
     addon_version = "music_assistant"
 
