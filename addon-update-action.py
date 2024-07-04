@@ -1,14 +1,13 @@
 import argparse
-
 import yaml
-from github import Auth, Github
+from github import Github
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
     "--github_token",
     type=str,
-    help="Github API Access token, NOT the usual Github token.",
+    help="GitHub API Access token.",
     required=True,
 )
 parser.add_argument(
@@ -20,44 +19,44 @@ parser.add_argument(
 parser.add_argument(
     "--pre_release",
     type=str,
-    help="Stable or Beta release.",
+    help="Indicates if it's a pre-release (true/false).",
     required=False,
 )
 
 if __name__ == "__main__":
     args = parser.parse_args()
 
+    # Authentication using personal access token
+    github_token = args.github_token
+    github = Github(github_token)
+
     MAIN = "main"
-    ORGANIZATION = "music-assistant"
+    OWNER = "xdumaster1"  # Replace with your GitHub username
     ADDON_REPO = "home-assistant-addon"
 
-    github = Github(auth=Auth.Token(args.github_token))
+    addon_repo = github.get_repo(f"{OWNER}/{ADDON_REPO}")
 
-    addon_repo = github.get_repo(f"{ORGANIZATION}/{ADDON_REPO}")
+    pre_release = args.pre_release.lower() in ("true", "yes", "1") if args.pre_release else False
 
-    pre_release = args.pre_release in ("true", "True")
+    addon_version = "music_assistant_beta" if pre_release else "music_assistant"
 
-    addon_version = "music_assistant"
+    try:
+        addon_config_file = addon_repo.get_contents(f"{addon_version}/config.yaml", ref=MAIN)
+        existing_config_content = yaml.safe_load(addon_config_file.decoded_content.decode("utf-8"))
 
-    if pre_release is True:
-        addon_version = "music_assistant_beta"
+        existing_config_content["version"] = args.new_server_version
 
-    addon_config_file = addon_repo.get_contents(
-        f"{addon_version}/config.yaml", ref=MAIN
-    )
+        updated_config = yaml.dump(existing_config_content, sort_keys=False)
 
-    existing_config_content = yaml.safe_load(
-        addon_config_file.decoded_content.decode("utf-8")
-    )
+        addon_repo.update_file(
+            path=f"{addon_version}/config.yaml",
+            message=f"Update config.yaml for {args.new_server_version}",
+            content=updated_config,
+            sha=addon_config_file.sha,
+            branch=MAIN,
+        )
 
-    existing_config_content["version"] = args.new_server_version
+        print(f"Successfully updated version to {args.new_server_version}.")
 
-    updated_config = yaml.dump(existing_config_content, sort_keys=False)
-
-    addon_repo.update_file(
-        path=f"{addon_version}/config.yaml",
-        message=f"Update config.yaml for {args.new_server_version}",
-        content=updated_config,
-        sha=addon_config_file.sha,
-        branch=MAIN,
-    )
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
